@@ -1,0 +1,197 @@
+##
+## Velocity Template for DisplayUsernamePasswordPage view-state
+##
+## Velocity context will contain the following properties
+## flowExecutionUrl - the form action location
+## flowRequestContext - the Spring Web Flow RequestContext
+## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
+## profileRequestContext - root of context tree
+## authenticationContext - context with authentication request information
+## authenticationErrorContext - context with login error state
+## authenticationWarningContext - context with login warning state
+## ldapResponseContext - context with LDAP state (if using native LDAP)
+## rpUIContext - the context with SP UI information from the metadata
+## extendedAuthenticationFlows - collection of "extended" AuthenticationFlowDescriptor objects
+## passwordPrincipals - contents of the shibboleth.authn.Password.PrincipalOverride bean
+## encoder - HTMLEncoder class
+## request - HttpServletRequest
+## response - HttpServletResponse
+## environment - Spring Environment object for property resolution
+## custom - arbitrary object injected by deployer
+##
+#set ($rpContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.profile.context.RelyingPartyContext'))
+#set ($username = $authenticationContext.getSubcontext('net.shibboleth.idp.authn.context.UsernamePasswordContext', true).getUsername())
+#set ($passwordEnabled = false)
+#if (!$passwordPrincipals or $passwordPrincipals.isEmpty() or $authenticationContext.isAcceptable($passwordPrincipals))
+  #set ($passwordEnabled = true)
+#end
+##
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>#springMessageText("idp.title", "NCSA Web Login Service")</title>
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:800,700,600,400,300' rel='stylesheet' type='text/css' />
+        <link rel="stylesheet" href="$request.getContextPath()/css/font-awesome.min.css" type="text/css" media="all" />
+        <link rel="stylesheet" href="$request.getContextPath()/css/gsce-search.css" type="text/css" media="all" />
+        <link rel="stylesheet" href="$request.getContextPath()/css/home.css" type="text/css" />
+        <link rel="stylesheet" href="$request.getContextPath()/css/second.css" type="text/css" />
+        <link rel="shortcut icon" href="$request.getContextPath()/images/favicon.ico" type="image/x-icon" />
+        <meta name="description" content="ncsa" />
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
+        <script src="$request.getContextPath()/js/response.js" type="text/javascript"></script>
+        <script src="$request.getContextPath()/js/general.js" type="text/javascript"></script>
+        <script src="$request.getContextPath()/js/enquire.js" type="text/javascript"></script>
+        <script src="$request.getContextPath()/js/menu.js" type="text/javascript"></script>
+        <script src="$request.getContextPath()/js/lower.js" type="text/javascript"></script>
+    </head>
+    <body onload="document.getElementById('username').focus()" data-responsejs='{ 
+    "create": [{ 
+        "prop": "width"
+      , "prefix": "src"
+      , "breakpoints": [0, 320, 720, 1010, 1280, 1600] 
+      }]
+    }'>
+
+      <div id="banner" onclick="hideNav('nav');" role="banner">
+        <h2>
+          <a href="http://www.ncsa.illinois.edu/">National Center for<br />Supercomputing Applications</a>
+          <span><a href="http://illinois.edu/">University of Illinois at Urbana-Champaign</a></span>
+        </h2>
+
+        <div id="contactus"><a class="icon-" aria-hidden="true" href="http://www.ncsa.illinois.edu/about/contact" title="Contact us">&#xf007;<!-- &#xf055; --></a> <a class="contacttxt" href="http://www.ncsa.illinois.edu/about/contact">Contact us</a>
+        </div>
+
+        <div id="logos">
+          <a href="http://www.ncsa.illinois.edu/"><img src="$request.getContextPath()/images/logos_ncsa.png" data-src1010="$request.getContextPath()/images/logos_ncsa.png" data-src1280="$request.getContextPath()/images/logos_ncsa.png" data-src1600="$request.getContextPath()/images/logos_ncsa.png" alt="NCSA home" /></a>
+          <a href="http://illinois.edu/"><img src="$request.getContextPath()/images/logos_uiuc.png" alt="Illinois home" /></a>
+        </div> <!-- end #logos -->
+      </div> <!-- end #banner -->
+
+      <div id="pagebody" onclick="hideNav('nav');">
+      <div id="pageheader"><h2>NCSA Web Authentication</h2></div>
+      <div id="pagecontent">
+      <div id="pagefield">
+      <div id="pagetext" class="nosidebar" role="main">
+
+
+        <div class="content">
+            #parse("login-error.vm")
+
+          <div style="width:350px; float:left;">
+            <form action="$flowExecutionUrl" method="post">
+            #parse("csrf/csrf.vm")
+            #set ($serviceName = $rpUIContext.serviceName)
+            #if ($serviceName && !$rpContext.getRelyingPartyId().contains($serviceName))
+              <legend>
+                #springMessageText("idp.login.loginTo", "Login to") $encoder.encodeForHTML($serviceName)
+              </legend>
+            #end
+                        
+            #if ($passwordEnabled)
+              <div class="form-element-wrapper">
+                <label for="username">#springMessageText("idp.login.username", "Username")</label>
+                <input class="form-element form-field lower" id="username" name="j_username" type="text"
+                  value="#if($username)$encoder.encodeForHTML($username)#end"
+                  oninput="lowerCaseF(this)">
+              </div>
+
+              <div class="form-element-wrapper">
+                <label for="password">#springMessageText("idp.login.password", "Password")</label>
+                <input class="form-element form-field" id="password" name="j_password" type="password" value="">
+              </div>
+
+              <div class="form-element-wrapper">
+                <input type="checkbox" name="donotcache" value="1" id="donotcache">
+                <label for="donotcache">#springMessageText("idp.login.donotcache", "Don't Remember Login")</label>
+              </div>
+
+              <div class="form-element-wrapper">
+                <button class="form-element form-button" type="submit" name="_eventId_proceed"
+                    onClick="this.childNodes[0].nodeValue='#springMessageText("idp.login.pleasewait", "Logging in, please wait...")'"
+                    >#springMessageText("idp.login.login", "Login")</button>
+              </div>
+            #end
+
+            #foreach ($extFlow in $extendedAuthenticationFlows)
+              #if ($authenticationContext.isAcceptable($extFlow) and $extFlow.apply(profileRequestContext))
+                <div class="form-element-wrapper">
+                  <button class="form-element form-button" type="submit" name="_eventId_$extFlow.getId()">
+                    #springMessageText("idp.login.$extFlow.getId().replace('authn/','')", $extFlow.getId().replace('authn/',''))
+                  </button>
+                </div>
+              #end
+            #end
+            </form>
+          </div>
+
+            #*
+              //
+              //    SP Description & Logo (optional)
+              //    These idpui lines will display added information (if available
+              //    in the metadata) about the Service Provider (SP) that requested
+              //    authentication. These idpui lines are "active" in this example
+              //    (not commented out) - this extra SP info will be displayed.
+              //    Remove or comment out these lines to stop the display of the
+              //    added SP information.
+              //
+            *#
+
+          <div style="margin-left:360px;">
+            #set ($logo = $rpUIContext.getLogo())
+            #if ($logo)
+              <img src= "$encoder.encodeForHTMLAttribute($logo)"
+                  alt="$encoder.encodeForHTMLAttribute($serviceName)"
+                  style="max-width:400px;max-height:400px;" />
+            #end
+            #set ($desc = $rpUIContext.getServiceDescription())
+            #if ($desc)
+              <p class="form-element">
+              $encoder.encodeForHTML($desc)
+              </p>
+            #end
+
+            <ul class="list list-help">
+              <li><a href="https://go.ncsa.illinois.edu/idp-guest" target="_blank">Sign Up For An Account</a></li>
+              <li><a href="https://go.ncsa.illinois.edu/2fa" target="_blank">Enroll In Duo</a></li>
+              <li><a href="https://identity.ncsa.illinois.edu/recover" target="_blank">Forgot Your Username?</a></li>
+              <li><a href="https://identity.ncsa.illinois.edu/reset" target="_blank">Forgot Your Password?</a></li>
+              <li><a href="mailto:help+idp@ncsa.illinois.edu">Send Email To Get Help</a></li>
+            </ul>
+
+          </div>
+
+        </div> <!-- end #content -->
+
+      </div> <!-- end #pagetext -->
+      </div> <!-- end #pagefield -->
+      </div> <!-- end #pagecontent -->
+      </div> <!-- end #pagebody -->
+
+      <div id="footer" role="contentinfo"  class="bump_user">
+        <div id="footlogos">
+          <a href="http://www.ncsa.illinois.edu/"><img src="$request.getContextPath()/images/footer_ncsa.png" alt="NCSA home" /></a>
+          <a href="http://illinois.edu/"><img src="$request.getContextPath()/images/logos_uiuc.png" alt="University of Illinois home" /></a>
+        </div>
+        <ul>
+        <li><a href="http://www.ncsa.illinois.edu/">NCSA Home <span class="icon-" aria-hidden="true" title="NCSA home">&#xf0da;</span></a></li>
+        <li><a href="http://www.ncsa.illinois.edu/site/sitemap">Sitemap <span class="icon-" aria-hidden="true" title="Sitemap">&#xf0da;</span></a></li>
+        <li><a href="http://www.ncsa.illinois.edu/about/contact">Contact NCSA <span class="icon-" aria-hidden="true" title="Contact NCSA">&#xf0da;</span></a></li>
+        <li><a href="https://internal.ncsa.illinois.edu/">NCSA intranet <span class="icon-" aria-hidden="true" title="NCSA intranet">&#xf0da;</span></a></li>
+              </ul>
+        <p>
+          Contact <a
+          href="mailto:help+idp@ncsa.illinois.edu">help+idp@ncsa.illinois.edu</a> with
+          questions regarding this page. 
+        </p>
+        <p>
+          All rights reserved.
+          &nbsp;&nbsp;&copy;2020 
+          Board of Trustees of the <a href="http://illinois.edu/">University of Illinois</a>.
+        </p>
+      </div> <!-- end #footer -->
+    
+  </body>
+</html>

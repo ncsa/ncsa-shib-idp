@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <!-- CACC-296 Deny login for users with grp_banned membership -->
+    <bean id="shibboleth.context-check.Condition" class="net.shibboleth.idp.profile.logic.SimpleAttributePredicate" p:useUnfilteredAttributes="true">
+        <property name="attributeValueMap">
+            <map>
+                <entry key="userBanned">
+                    <list>
+                        <value>true</value>
+                    </list>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="shibboleth.context-check.Function" parent="shibboleth.ContextFunctions.Scripted" factory-method="inlineScript"
+	        p:customObject-ref="shibboleth.context-check.Condition">
+        <constructor-arg>
+            <value>
+            <![CDATA[
+            var event = "proceed";
+            if (custom.apply(input)) {
+                event = "ContextCheckDenied";
+            }
+            event;
+            ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+    
+</beans>
