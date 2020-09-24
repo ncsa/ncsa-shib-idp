@@ -1,1 +1,1 @@
-docker build --no-cache -t terrencegf/shib-idp-ncsa:latest .
+docker build --no-cache -t terrencegf/ncsa-shib-idp:latest .

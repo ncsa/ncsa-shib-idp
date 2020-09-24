@@ -61,7 +61,7 @@ Then build the container as follows.
 sh build.sh
 ```
 
-This will result in a container `terrencegf/shib-idp-ncsa`. 
+This will result in a container `terrencegf/ncsa-shib-idp:latest`. 
 
 ## Uploading Container to Docker Hub
 
