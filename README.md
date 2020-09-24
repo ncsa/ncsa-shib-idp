@@ -142,20 +142,20 @@ can email the resulting `idp_ncsa_illinois_edu.csr` file to
 a certificate on your behalf. 
 
 1. Log in to the [InCommon Certificate Service](https://cert-manager.com/customer/InCommon) .
-1. Click on the "Certificates" tab, then click the "+ Add" button.
-1. Select the "Manual creation of CSR" radio button, then click the "Next >" button.
-1. On the "CSR" page, paste the contents of the `idp_ncsa_illinois_edu.csr` file
+2. Click on the "Certificates" tab, then click the "+ Add" button.
+3. Select the "Manual creation of CSR" radio button, then click the "Next >" button.
+4. On the "CSR" page, paste the contents of the `idp_ncsa_illinois_edu.csr` file
    into the "CSR" text box, then click the "Next >" button.
-1. On the "Basic Info" page, fill in the fields as follows, then click the "Next >"
+5. On the "Basic Info" page, fill in the fields as follows, then click the "Next >"
    button.
-  * Organization: University of Illinois
-  * Department: NCSA
-  * Certificate Profile: InCommon SSL (SHA-2)
-  * Certifiate Term: 398 Days
-  * Common Name: idp.ncsa.illinois.edu (should be filled in automatically)
-  * Requester: (Your name)
-  * External Requestor: help+idp@ncsa.illinois.edu
-1. On the "Auto renew" page, optionally check the checkbox for "Enable auto renewal
+  - Organization: University of Illinois
+  - Department: NCSA
+  - Certificate Profile: InCommon SSL (SHA-2)
+  - Certifiate Term: 398 Days
+  - Common Name: idp.ncsa.illinois.edu (should be filled in automatically)
+  - Requester: (Your name)
+  - External Requestor: help+idp@ncsa.illinois.edu
+6. On the "Auto renew" page, optionally check the checkbox for "Enable auto renewal
    of this certificate", then click the "OK" button.
 
 After a few minutes, you should receive an email that your certificate is ready. In
@@ -174,6 +174,6 @@ keytool -import \
         -alias idp.ncsa.illinois.edu \
         -file idp_ncsa_illinois_edu.p7b \
         -keystore /opt/ncsa-shib-idp/credentials/tomcat/keystore.jks
-Enter keystore password:
+Enter keystore password: <password not echoed>
 ```
 
