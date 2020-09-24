@@ -13,8 +13,7 @@ for CANAME in $CANAMES ; do
     if [ -e $TMPDIR/$CANAME.r0 ] ; then
         cp $TMPDIR/$CANAME.r0 $CANAME.r0.new
         if (test ! -e $CANAME.r0 -o ! -z "`diff $CANAME.r0.new $CANAME.r0 2> /dev/null`") ; then
-            openssl crl -outform DER -in $CANAME.r0.new \
-              -out $CANAME.crl.new
+            openssl crl -outform DER -in $CANAME.r0.new -out $CANAME.crl.new
             mv $CANAME.r0.new $CANAME.r0
             mv $CANAME.crl.new $CANAME.crl
         else
