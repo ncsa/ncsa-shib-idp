@@ -61,7 +61,7 @@ Then build the container as follows.
 sh build.sh
 ```
 
-This will result in a container `terrencegf/ncsa-shib-idp:latest`. 
+This will result in a container `ncsa/shib-idp:latest`. 
 
 ## Uploading Container to Docker Hub
 
@@ -78,12 +78,12 @@ sh build.sh            # Rebuild the container
 git add -A
 git commit -m "version $VERSION"
 git tag -a "$VERSION" -m "version $VERSION"
-git push
+git push -u origin master
 git push --tags
 
-docker tag  terrencegf/ncsa-shib-idp:latest terrencegf/ncsa-shib-idp:$VERSION
-docker push terrencegf/ncsa-shib-idp:latest
-docker push terrencegf/ncsa-shib-idp:$VERSION
+docker tag  ncsa/shib-idp:latest ncsa/shib-idp:$VERSION
+docker push ncsa/shib-idp:latest
+docker push ncsa/shib-idp:$VERSION
 ```
 
 ## Running
@@ -99,14 +99,14 @@ You can log into the running container using the `inspect.sh` script, which does
 following.
 
 ```
-docker exec -t -i idp-ncsa /bin/bash
+docker exec -t -i shib-idp /bin/bash
 ```
 
 ## Stopping
 
 ```
-docker stop idp-ncsa
-docker rm idp-ncsa
+docker stop shib-idp
+docker rm shib-idp
 ```
 
 ## SSL Certificate

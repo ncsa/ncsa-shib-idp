@@ -1,1 +1,1 @@
-docker exec -t -i idp-ncsa /bin/bash
+docker exec -t -i shib-idp /bin/bash
