@@ -76,12 +76,13 @@ VERSION=`cat VERSION`  # Get current version from file
 sh build.sh            # Rebuild the container
 
 git add -A
-git commit -m "version $VERSION"
-git tag -a "$VERSION" -m "version $VERSION"
+git commit -m "Version $VERSION"
+git tag -a "$VERSION" -m "Version $VERSION"
 git push -u origin master
 git push --tags
 
 docker tag  ncsa/shib-idp:latest ncsa/shib-idp:$VERSION
+docker login
 docker push ncsa/shib-idp:latest
 docker push ncsa/shib-idp:$VERSION
 ```
