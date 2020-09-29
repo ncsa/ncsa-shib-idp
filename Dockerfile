@@ -1,4 +1,4 @@
-FROM tier/shib-idp:latest
+FROM i2incommon/shib-idp:latest
 
 # Need myproxy-logon and openssl for crl cronjob.
 RUN yum -y update && yum -y install myproxy openssl && yum -y clean all
