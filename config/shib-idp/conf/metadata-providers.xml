@@ -109,4 +109,11 @@
                       indexesRef="shibboleth.CASMetadataIndices" />
     -->
 
+    <!-- dev.cilogon.org Shib SP metadata -->
+    <MetadataProvider id="LocalMetadataDev"  xsi:type="FilesystemMetadataProvider" metadataFile="%{idp.home}/metadata/dev-cilogon-metadata.xml">
+        <MetadataFilter xsi:type="SignatureValidation" 
+             requireSignedRoot="false"
+             certificateFile="%{idp.home}/metadata/dev.cilogon.crt" />
+    </MetadataProvider>
+    
 </MetadataProvider>
