@@ -52,10 +52,6 @@
         <value>%{idp.home}/system/conf/access-control-system.xml</value>
     </util:list>
 
-    <util:list id="shibboleth.CASServiceRegistryResources">
-        <value>%{idp.home}/conf/cas-protocol.xml</value>
-    </util:list>
-
     <!--
     This collection of resources differs slightly in that it should not include the file extension.
     Message sources are internationalized, and Spring will search for a compatible language extension

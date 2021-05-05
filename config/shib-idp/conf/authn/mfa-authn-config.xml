@@ -48,7 +48,12 @@
             <bean parent="shibboleth.authn.MFA.Transition" p:nextFlow="authn/Duo" />
         </entry>
 
+        <!--
+        <entry key="authn/Password">
+            <bean parent="shibboleth.authn.MFA.Transition" p:nextFlow="authn/DuoOIDC" />
+        </entry>
+        -->
+
     </util:map>
 
-    
 </beans>
