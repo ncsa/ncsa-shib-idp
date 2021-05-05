@@ -78,7 +78,7 @@ sh build.sh            # Rebuild the container
 git add -A
 git commit -m "Version $VERSION"
 git tag -a "$VERSION" -m "Version $VERSION"
-git push -u origin master
+git push -u origin main
 git push --tags
 
 docker tag  ncsa/shib-idp:latest ncsa/shib-idp:$VERSION
