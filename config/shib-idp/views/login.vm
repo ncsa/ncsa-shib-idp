@@ -154,7 +154,6 @@
             #end
 
             <ul class="list list-help">
-              <li><a href="https://go.ncsa.illinois.edu/idp-guest" target="_blank">Sign Up For An Account</a></li>
               <li><a href="https://go.ncsa.illinois.edu/2fa" target="_blank">Enroll In Duo</a></li>
               <li><a href="https://identity.ncsa.illinois.edu/recover" target="_blank">Forgot Your Username?</a></li>
               <li><a href="https://identity.ncsa.illinois.edu/reset" target="_blank">Forgot Your Password?</a></li>
