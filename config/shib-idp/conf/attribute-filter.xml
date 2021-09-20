@@ -30,6 +30,9 @@
         <AttributeRule attributeID="eduPersonAffiliation">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
+        <AttributeRule attributeID="eduPersonAssurance">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
         <AttributeRule attributeID="samlSubjectID">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>

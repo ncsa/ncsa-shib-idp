@@ -73,6 +73,28 @@
         ]]>
         </Script>
     </AttributeDefinition>
+    
+    <!-- CACC-375 Assert eduPersonAssurance -->
+    <AttributeDefinition id="eduPersonAssurance" xsi:type="ScriptedAttribute">
+        <InputAttributeDefinition ref="employeeType" />
+        <DisplayName xml:lang="en">eduPersonAssurance</DisplayName>
+        <AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:eduPersonAssurance" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" friendlyName="eduPersonAssurance" encodeType="false" />
+        <Script>
+        <![CDATA[
+                eduPersonAssurance.addValue("https://refeds.org/assurance");
+                eduPersonAssurance.addValue("https://refeds.org/assurance/IAP/low");
+                is_Staff = employeeType != null && employeeType.getValues().size()>0 && employeeType.getValues().get(0).equals("all_ncsa_employe");
+                if (is_Staff) { 
+                    eduPersonAssurance.addValue("https://refeds.org/assurance/ID/unique");
+                    eduPersonAssurance.addValue("https://refeds.org/assurance/ID/no-eppn-reassign");
+                    eduPersonAssurance.addValue("https://refeds.org/assurance/IAP/medium");
+                    eduPersonAssurance.addValue("https://refeds.org/assurance/profile/cappuccino");
+                    eduPersonAssurance.addValue("https://refeds.org/assurance/IAP/local-enterprise");
+                };
+        ]]>
+        </Script>
+    </AttributeDefinition>
 
     <AttributeDefinition xsi:type="Scoped" id="eduPersonScopedAffiliation" scope="%{idp.scope}">
         <InputAttributeDefinition ref="eduPersonAffiliation" />
