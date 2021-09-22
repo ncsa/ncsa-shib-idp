@@ -26,7 +26,6 @@
         <AttributeRule attributeID="mail">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
-
         <AttributeRule attributeID="eduPersonAffiliation">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
@@ -58,6 +57,15 @@
         <PolicyRequirementRule xsi:type="Requester" value="https://portal.geni.net/shibboleth" />
 
         <AttributeRule attributeID="eduPersonEntitlement">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+    </AttributeFilterPolicy>
+
+    <!-- CACC-379 Release isMemberOf to Cline Center -->
+    <AttributeFilterPolicy id="Cline">
+        <PolicyRequirementRule xsi:type="Requester" value="https://archerapi.clinecenter.illinois.edu/shibboleth" />
+        
+        <AttributeRule attributeID="isMemberOf">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
     </AttributeFilterPolicy>

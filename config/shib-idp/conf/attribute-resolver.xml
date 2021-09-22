@@ -109,16 +109,25 @@
         <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oasis:names:tc:SAML:attribute:subject-id" friendlyName="subject-id" encodeType="false" />
     </AttributeDefinition>
 
-    <!-- CACC-153 - Amazon Web Services for LSST -->
-    <!-- CIL-412  - Amazon Web Services for CILogon -->
-    <AttributeDefinition id="memberOf" xsi:type="Simple">
+    <!-- CACC-379 - Assert special isMemberOf for Cline Center -->
+    <AttributeDefinition id="isMemberOf" xsi:type="ScriptedAttribute" relyingParties="https://archerapi.clinecenter.illinois.edu/shibboleth">
         <InputDataConnector ref="myLDAP" attributeNames="memberOf" />
-        <AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:memberOf" />
-        <AttributeEncoder xsi:type="SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.5.1.1" friendlyName="memberOf" />
+        <DisplayName xml:lang="en">Group membership</DisplayName>
+        <AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:isMemberOf" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.5.1.1" friendlyName="isMemberOf" encodeType="false" />
+        <Script>
+        <![CDATA[
+                if (memberOf.getValues().contains("cn=grp_cline_archer,ou=Groups,dc=ncsa,dc=illinois,dc=edu")) {
+                    isMemberOf.addValue('grp_cline_archer');
+                }
+        ]]>
+        </Script>
     </AttributeDefinition>
 
+    <!-- CACC-153 - Amazon Web Services for LSST -->
+    <!-- CIL-412  - Amazon Web Services for CILogon -->
     <AttributeDefinition id="awsRoles" xsi:type="ScriptedAttribute">
-        <InputAttributeDefinition ref="memberOf" />
+        <InputDataConnector ref="myLDAP" attributeNames="memberOf" />
         <DisplayName xml:lang="en">Amazon Web Services Roles</DisplayName>
         <AttributeEncoder xsi:type="SAML2String" name="https://aws.amazon.com/SAML/Attributes/Role" friendlyName="Role" />
         <Script>
@@ -159,7 +168,6 @@
     </AttributeDefinition>
 
     <AttributeDefinition id="awsRoleSessionName" xsi:type="ScriptedAttribute">
-        <InputAttributeDefinition ref="memberOf" />
         <InputDataConnector ref="myLDAP" allAttributes="true" />
         <DisplayName xml:lang="en">Amazon Web Services User ID</DisplayName>
         <AttributeEncoder xsi:type="SAML2String" name="https://aws.amazon.com/SAML/Attributes/RoleSessionName" friendlyName="RoleSessionName" />
@@ -183,7 +191,7 @@
     </AttributeDefinition>
 
     <AttributeDefinition id="awsSessionDuration" xsi:type="ScriptedAttribute">
-        <InputAttributeDefinition ref="memberOf" />
+        <InputDataConnector ref="myLDAP" attributeNames="memberOf" />
         <DisplayName xml:lang="en">Amazon Web Services Session Duration</DisplayName>
         <AttributeEncoder xsi:type="SAML2String" name="https://aws.amazon.com/SAML/Attributes/SessionDuration" friendlyName="SessionDuration" />
         <Script>
@@ -206,7 +214,7 @@
     </AttributeDefinition>
 
     <AttributeDefinition id="userBanned" xsi:type="ScriptedAttribute">
-        <InputAttributeDefinition ref="memberOf" />
+        <InputDataConnector ref="myLDAP" attributeNames="memberOf" />
         <Script>
         <![CDATA[
                 if (memberOf != null && memberOf.getValues().contains("cn=grp_banned,ou=Groups,dc=ncsa,dc=illinois,dc=edu")) { 
@@ -218,7 +226,7 @@
 
     <!-- HIDP-21 - Release https://portal.geni.net Entitlement to GENI -->
     <AttributeDefinition id="eduPersonEntitlement" xsi:type="ScriptedAttribute">
-        <InputAttributeDefinition ref="memberOf" />
+        <InputDataConnector ref="myLDAP" attributeNames="memberOf" />
         <DisplayName xml:lang="en">eduPersonEntitlement</DisplayName>
         <AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:eduPersonEntitlement" encodeType="false" />
         <AttributeEncoder xsi:type="SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.7" friendlyName="eduPersonEntitlement" encodeType="false" />
