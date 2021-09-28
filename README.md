@@ -81,8 +81,8 @@ git tag -a "$VERSION" -m "Version $VERSION"
 git push -u origin main
 git push --tags
 
-docker tag  ncsa/shib-idp:latest ncsa/shib-idp:$VERSION
 docker login
+docker tag  ncsa/shib-idp:latest ncsa/shib-idp:$VERSION
 docker push ncsa/shib-idp:latest
 docker push ncsa/shib-idp:$VERSION
 ```
