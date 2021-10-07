@@ -63,7 +63,12 @@
 
     <!-- CACC-379 Release isMemberOf to Cline Center -->
     <AttributeFilterPolicy id="Cline">
-        <PolicyRequirementRule xsi:type="Requester" value="https://archerapi.clinecenter.illinois.edu/shibboleth" />
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://archerapi.clinecenter.illinois.edu/shibboleth" />
+            <Rule xsi:type="Requester" value="https://archerapi.clinecenter.illinois.edu" />
+            <Rule xsi:type="Requester" value="https://archerapi-dev.clinecenter.illinois.edu/shibboleth" />
+            <Rule xsi:type="Requester" value="https://archerapi-dev.clinecenter.illinois.edu" />
+        </PolicyRequirementRule>
         
         <AttributeRule attributeID="isMemberOf">
             <PermitValueRule xsi:type="ANY" />

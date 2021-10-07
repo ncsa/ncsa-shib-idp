@@ -110,7 +110,8 @@
     </AttributeDefinition>
 
     <!-- CACC-379 - Assert special isMemberOf for Cline Center -->
-    <AttributeDefinition id="isMemberOf" xsi:type="ScriptedAttribute" relyingParties="https://archerapi.clinecenter.illinois.edu/shibboleth">
+    <AttributeDefinition id="isMemberOf" xsi:type="ScriptedAttribute"
+        relyingParties="https://archerapi.clinecenter.illinois.edu/shibboleth https://archerapi.clinecenter.illinois.edu https://archerapi-dev.clinecenter.illinois.edu/shibboleth https://archerapi-dev.clinecenter.illinois.edu">
         <InputDataConnector ref="myLDAP" attributeNames="memberOf" />
         <DisplayName xml:lang="en">Group membership</DisplayName>
         <AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:isMemberOf" encodeType="false" />
