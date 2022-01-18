@@ -7,7 +7,7 @@ cd /usr/local/tomcat/crl
 
 env X509_CERT_DIR=$TMPDIR \
   MYPROXY_SERVER_DN="/DC=org/DC=cilogon/C=US/O=CILogon/CN=myproxy.cilogon.org" \
-  myproxy-get-trustroots -b -s cilogon-warm.ncsa.illinois.edu > /dev/null 2>&1
+  myproxy-get-trustroots -b -s myproxy1-cilogon.ncsa.illinois.edu > /dev/null 2>&1
 
 for CANAME in $CANAMES ; do
     if [ -e $TMPDIR/$CANAME.r0 ] ; then
