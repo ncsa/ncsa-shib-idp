@@ -256,27 +256,6 @@
             ]]>
         </FilterTemplate>
         <ReturnAttributes>%{idp.attribute.resolver.LDAP.returnAttributes}</ReturnAttributes>
-        <FailoverDataConnector ref="ScriptedAttributeConnector" />
-    </DataConnector>
-
-    <!-- If LDAP connection is down, failover to setting the uid from the Kerberos principal. -->
-
-    <DataConnector id="ScriptedAttributeConnector" xsi:type="ScriptedDataConnector">
-        <Script><![CDATA[
-IdPAttribute = Java.type("net.shibboleth.idp.attribute.IdPAttribute");
-HashSet = Java.type("java.util.HashSet");
-StringAttributeValue = Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
-
-setStringAttribute("uid",resolutionContext.principal);
-
-function setStringAttribute(attrName,attrValue) {
-    var attr = new IdPAttribute(attrName);
-    var set = new HashSet(1);
-    set.add(new StringAttributeValue(attrValue));
-    attr.setValues(set);
-    connectorResults.add(attr);
-}
-        ]]></Script>
     </DataConnector>
 
 </AttributeResolver>
