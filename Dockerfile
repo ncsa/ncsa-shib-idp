@@ -6,6 +6,7 @@ RUN yum -y update && yum -y install myproxy openssl && yum -y clean all
 COPY config/etc /etc
 COPY config/shib-idp /opt/shibboleth-idp
 COPY config/tomcat /usr/local/tomcat
+COPY VERSION /usr/local/tomcat
 
 RUN /opt/shibboleth-idp/bin/plugin.sh --noPrompt -i \
         https://shibboleth.net/downloads/identity-provider/plugins/oidc-common/2.1.0/oidc-common-dist-2.1.0.tar.gz \
