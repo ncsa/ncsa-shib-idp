@@ -103,10 +103,12 @@
                 <input class="form-element form-field" id="password" name="j_password" type="password" value="">
               </div>
 
+<!--
               <div class="form-element-wrapper">
                 <input type="checkbox" name="donotcache" value="1" id="donotcache">
                 <label for="donotcache">#springMessageText("idp.login.donotcache", "Don't Remember Login")</label>
               </div>
+-->
 
               <div class="form-element-wrapper">
                 <button class="form-element form-button" type="submit" name="_eventId_proceed"
