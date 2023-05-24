@@ -51,6 +51,7 @@
           href="https://identity.ncsa.illinois.edu/reset">https://identity.ncsa.illinois.edu/reset</a>
           to reset it.
         </div>
+<%--
         <div class="content">
           Having trouble accessing portal.geni.net?
           <br/>
@@ -58,6 +59,7 @@
           style="text-decoration:underline; text-decoration-style:dotted;"
           href="mailto:help@geni.net">help@geni.net</a>.
         </div>
+--%>
       </div>
 
       <footer>
