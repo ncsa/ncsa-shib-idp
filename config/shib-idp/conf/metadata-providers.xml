@@ -116,4 +116,8 @@
              certificateFile="%{idp.home}/metadata/dev.cilogon.crt" />
     </MetadataProvider>
     
+    <!-- sslvpn.ncsa.illinois.edu Shib SP metadata -->
+    <MetadataProvider id="LocalMetadataDev"  xsi:type="FilesystemMetadataProvider" metadataFile="%{idp.home}/metadata/sslvpn-ncsa-metadata.xml">
+    </MetadataProvider>
+    
 </MetadataProvider>
