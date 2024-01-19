@@ -8,14 +8,14 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
-                           
+
        default-init-method="initialize"
        default-destroy-method="destroy">
 
     <!--
     Unverified RP configuration, defaults to no support for any profiles. Add <ref> elements to the list
     to enable specific default profile settings (as below), or create new beans inline to override defaults.
-    
+
     "Unverified" typically means the IdP has no metadata, or equivalent way of assuring the identity and
     legitimacy of a requesting system. To run an "open" IdP, you can enable profiles here.
     -->
@@ -52,7 +52,7 @@
     <!-- Container for any overrides you want to add. -->
 
     <util:list id="shibboleth.RelyingPartyOverrides">
-    
+
         <!--
         Override example that identifies a single RP by name and configures it
         for SAML 2 SSO without encryption. This is a common "vendor" scenario.
@@ -87,7 +87,18 @@
                 </list>
             </property>
         </bean>
-        
+
+        <!-- HIDP-108 Release ePPN as NameID for Cisco VPN at sslvpn.ncsa.illinois.edu -->
+        <bean parent="RelyingPartyByName"
+              c:relyingPartyIds="https://sslvpn.ncsa.illinois.edu/saml/sp/metadata/SAML-IdP-TG">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO"
+                          p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" />
+                </list>
+            </property>
+        </bean>
+
     </util:list>
 
 </beans>

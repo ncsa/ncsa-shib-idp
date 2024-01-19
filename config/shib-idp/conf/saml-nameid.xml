@@ -38,12 +38,11 @@
         <ref bean="shibboleth.SAML2PersistentGenerator" />
         <!-- -->
 
-        <!--
+        <!-- HIDP-108 Use NameID emailAddress for sslvpn.ncsa.illinois.edu -->
         <bean parent="shibboleth.SAML2AttributeSourcedGenerator"
             p:omitQualifiers="true"
             p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
-            p:attributeSourceIds="#{ {'mail'} }" />
-        -->
+            p:attributeSourceIds="#{ {'eduPersonPrincipalName'} }" />
                 
     </util:list>
 
