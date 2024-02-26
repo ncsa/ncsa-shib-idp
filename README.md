@@ -107,11 +107,41 @@ does the following.
 docker exec -t -i shib-idp /bin/bash
 ```
 
+You can view the logs for the running container as well. (The `-f` flag
+indicates to "follow" the logs.)
+
+```
+docker logs -f shib-idp
+```
+
 ## Stopping
 
 ```
 docker stop shib-idp
 docker rm shib-idp
+```
+
+## Updating the Services with a new Docker Image
+
+```
+# Stop the current instance
+docker stop shib-idp
+docker rm shib-idp
+
+# Remove the current Docker image
+docker image rm ncsa/shib-idp
+
+# Start the service, which will pull down the "latest" image
+cd /opt/ncsa-shib-idp
+sh run.sh
+
+# Monitor the startup sequence 
+docker logs -f shib-idp
+
+# Look for the following log message:
+# INFO  org.apache.catalina.startup.Catalina- Server startup in [34387] milliseconds
+
+# Test ECP as documented at https://wiki.ncsa.illinois.edu/x/u5fEBw
 ```
 
 ## SSL Certificate
