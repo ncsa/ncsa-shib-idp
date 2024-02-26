@@ -117,7 +117,9 @@
     </MetadataProvider>
     
     <!-- sslvpn.ncsa.illinois.edu Shib SP metadata -->
-    <MetadataProvider id="LocalMetadataSSLVPN"  xsi:type="FilesystemMetadataProvider" metadataFile="%{idp.home}/metadata/sslvpn-ncsa-metadata.xml">
-    </MetadataProvider>
+    <MetadataProvider id="LocalMetadataSSLVPN1"  xsi:type="FilesystemMetadataProvider" metadataFile="%{idp.home}/metadata/sslvpn-ncsa-avl-vpn-anyconnect-saml-localonly-metadata.xml" />
+    <MetadataProvider id="LocalMetadataSSLVPN2"  xsi:type="FilesystemMetadataProvider" metadataFile="%{idp.home}/metadata/sslvpn-ncsa-ncsa-ra-vpn-anyconnect-saml-cerberus-metadata.xml" />
+    <MetadataProvider id="LocalMetadataSSLVPN3"  xsi:type="FilesystemMetadataProvider" metadataFile="%{idp.home}/metadata/sslvpn-ncsa-ncsa-ra-vpn-anyconnect-saml-localonly-metadata.xml" />
+    <MetadataProvider id="LocalMetadataSSLVPN4"  xsi:type="FilesystemMetadataProvider" metadataFile="%{idp.home}/metadata/sslvpn-ncsa-SAML-IdP-TG-metadata.xml" />
     
 </MetadataProvider>
