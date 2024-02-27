@@ -89,8 +89,15 @@
         </bean>
 
         <!-- HIDP-108 Release ePPN as NameID for Cisco VPN at sslvpn.ncsa.illinois.edu -->
-        <bean parent="RelyingPartyByName"
-              c:relyingPartyIds="https://sslvpn.ncsa.illinois.edu/saml/sp/metadata/SAML-IdP-TG">
+        <bean parent="RelyingPartyByName">
+            <constructor-arg name="relyingPartyIds">
+                <list>
+                    <value>https://sslvpn.ncsa.illinois.edu/saml/sp/metadata/SAML-IdP-TG</value>
+                    <value>https://sslvpn.ncsa.illinois.edu/saml/sp/metadata/avl-vpn-anyconnect-saml-localonly</value>
+                    <value>https://sslvpn.ncsa.illinois.edu/saml/sp/metadata/ncsa-ra-vpn-anyconnect-saml-cerberus</value>
+                    <value>https://sslvpn.ncsa.illinois.edu/saml/sp/metadata/ncsa-ra-vpn-anyconnect-saml-localonly</value>
+                </list>
+            </constructor-arg>
             <property name="profileConfigurations">
                 <list>
                     <bean parent="SAML2.SSO"
