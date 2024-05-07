@@ -1,4 +1,4 @@
-# Shibboleth Identity Provider (IdP) 4 for NCSA
+# Shibboleth Identity Provider (IdP) for NCSA
 
 This repository contains the files necessary to build the Shibboleth
 Identity Provider for NCSA (idp.ncsa.illinois.edu) as a Docker container. It
@@ -9,6 +9,28 @@ is based on the [Shibboleth IdP Docker Linux Container
 approach with most files "baked-in" and secrets mounted on the docker host.
 The secrets are stored elsewhere in a [secure GitLab server at
 NCSA](https://git.security.ncsa.illinois.edu/cisr/ncsa-shib-idp).
+
+## Servers
+
+[idp.ncsa.illinois.edu](https://idp.ncsa.illinois.edu/idp/) is hosted on
+servers managed by NCSA Security Operations. There are 3 VMs which host the
+Docker servers for the NCSA IdP: `cadocker1`, `cadocker2`, and
+`cadocker-dev`. The Docker servers are independent, i.e., not using Docker
+Swarm or Kubernetes. Setting the "active" production host involves setting a
+virtual Ethernet interface to "up" on one of `cadocker1` or `cadocker2`.
+This is achieved with [ucarp](https://github.com/jedisct1/UCarp). The Docker
+containers are configured to listen to connections for http/https (80/443)
+on the host VMs, and the VM firewalls are configured to allow all traffic
+for these ports. 
+
+### Hosts and IP Addresses
+
+| Hostname                               | IP Address     | Use |
+|----------------------------------------|----------------|-----|
+| cadocker1.ncsa.illinois.edu            | 141.142.149.9  | Primary production Docker server for idp.ncsa.illinois.edu |
+| cadocker2.ncsa.illinois.edu            | 141.142.149.10 | Secondary production Docker server for idp.ncsa.illinois.edu |
+| cadocker-dev.ncsa.illinois.edu         | 141.142.149.11 | Development Docker server for idp.ncsa.illinois.edu |
+| shib-docker.security.ncsa.illinois.edu | 141.142.149.33 | Virtual IP address listened to by cadocker1/2, and used by DNS |
 
 ## Files
 
@@ -24,16 +46,19 @@ This respository contains files without any secrets. Configuration files
 with secrets (such as the salt for hashing) should be installed on the
 Docker host in the `/opt/ncsa-shib-idp` directory. These files are stored in
 a [GitLab respository at
-NCSA](https://git.security.ncsa.illinois.edu/cisr/ncsa-shib-idp). The file
-listing is shown below. Note that file permissions are important since these
-files will be copied into the running Docker container.
+NCSA](https://git.security.ncsa.illinois.edu/cisr/ncsa-shib-idp).  Access to
+this GitLab server is restricted to the NCSA Security bastion hosts (e.g.,
+bastion1.security.ncsa.illinois.edu). So in order to clone the repository,
+you will need to configure git SSH to proxy from cadocker1/2 through one of
+the bastion hosts. See [GitLab Setup](gitlabsetup.md) for more information.
+
+The files containing secrets are listed below. Note that file permissions
+are important since these files will be copied into the running Docker
+container.
 
 ```
 /opt/ncsa-shib-idp/
 ├── [drwxr-xr-x root     docker  ]  config
-│   ├── [drwxr-xr-x root     docker  ]  etc
-│   │   └── [drwxr-xr-x root     docker  ]  grid-security
-│   │       └── [-r-------- root     docker  ]  hostkey.pem
 │   └── [drwxr-xr-x root     docker  ]  tomcat
 │       └── [-rw-r----- root     docker  ]  server.xml
 ├── [drwxr-xr-x root     docker  ]  credentials
@@ -55,9 +80,10 @@ files will be copied into the running Docker container.
 └── [-rw-r--r-- root     docker  ]  run.sh
 ```
 
+
 ## Building
 
-To build the container, you must have Docker installed and configured
+To build the container, you must have Podman/Docker installed and configured
 appropriately.  Then build the container as follows.
 
 ```
@@ -91,58 +117,150 @@ docker push ncsa/shib-idp:latest
 docker push ncsa/shib-idp:$VERSION
 ```
 
+## Working with Two Production Servers via "ucarp"
+
+While the NCSA Shibboleth IdP Docker container is running on all cadocker
+VMs, only one of cadocker1 / cadocker2 actually handles requests for
+<https://idp.ncsa.illinois.edu>. Which cadocker instance is "active" is
+determined by a virtual Ethernet interface for 141.142.149.33
+(shib-docker.security.ncsa.illinois.edu). There is a DNS CNAME record for
+idp.ncsa.illinois.edu which points to shib-docker.security.ncsa.illinois.edu .
+In order to easily swap between cadocker1 and cadocker2 with this virtual
+IP address, use [ucarp](https://ucarp.wordpress.com/)
+([man page](http://manpages.ubuntu.com/manpages/bionic/man8/ucarp.8.html)).
+
+There are two ways see if cadocker1/2 is the "active" host:
+
+1.  `ip address | grep 141.142.149.33`
+1.  `sudo pkill -10 ucarp && sudo journalctl -u ucarp@253 | grep MASTER`
+
+In order to "swap" which server is active, ensure you are on the "active"
+server (a.k.a., MASTER), and demote it to BACKUP as follows:
+
+*   `sudo pkill -12 ucarp`
+*   `sudo pkill -10 ucarp && sudo journalctl -u ucarp@253 | grep BACKUP`
+
+The other server will notice that there is no MASTER server and grab control
+of the virtual interface.
+
+The "active" (a.k.a., MASTER) server remains the "active" server until it is
+demoted to BACKUP. Note that there is no way to "promote" the BACKUP server
+to MASTER. You must demote the MASTER server to BACKUP.
+
 ## Running
 
 ```
 sh run.sh
-docker ps
 ```
 
 ## Viewing Running Container
 
-You can log into the running container using the `inspect.sh` script, which
-does the following.
+You can log into the running container as follows.
 
 ```
-docker exec -t -i shib-idp /bin/bash
+sh inspect.sh
 ```
 
-You can view the logs for the running container as well. (The `-f` flag
-indicates to "follow" the logs.)
+You can view the logs for the running container as well.
 
 ```
-docker logs -f shib-idp
+sh logs.sh
 ```
 
 ## Stopping
 
 ```
-docker stop shib-idp
-docker rm shib-idp
+sudo podman stop shib-idp
+sudo podman rm shib-idp
 ```
 
 ## Updating the Services with a new Docker Image
 
+Once a new Docker container image has been pushed to [Docker
+Hub](https://hub.docker.com/repository/docker/ncsa/shib-idp/), we need to
+update the local container instances on cadocker-dev, cadocker1, and
+cadocker2 (in that order), testing as we go. Updating the container consists
+of stopping the container, removing the container, cleaning up references to
+the container, and starting the container again (which will pull in the
+latest tagged container version).
+
+:warning: **WARNING!** :warning: Make sure that the current VM is NOT
+"active" (a.k.a., MASTER), e.g.:
+
+```
+ip address | grep 141.142.149.33` # should be empty
+```
+
 ```
 # Stop the current instance
-docker stop shib-idp
-docker rm shib-idp
+sudo podman stop shib-idp
+sudo podman rm shib-idp
 
 # Remove the current Docker image
-docker image rm ncsa/shib-idp
+sudo podman image rm ncsa/shib-idp
 
 # Start the service, which will pull down the "latest" image
 cd /opt/ncsa-shib-idp
 sh run.sh
 
 # Monitor the startup sequence 
-docker logs -f shib-idp
+sh logs.sh
 
 # Look for the following log message:
 # INFO  org.apache.catalina.startup.Catalina- Server startup in [34387] milliseconds
-
-# Test ECP as documented at https://wiki.ncsa.illinois.edu/x/u5fEBw
 ```
+
+## Testing Running Instances
+
+Testing idp.ncsa.illinois.edu on each Docker instance is easy since all
+interaction with the IdP is initiated by the client (e.g., the user's
+browser). So to test a specific Docker instance, you simply need to add an
+entry in your local `/etc/hosts` file which points to the server you want to
+use. For example, in order to test the IdP running on cadocker-dev, add the
+following line to your local `/etc/hosts` file:
+
+```
+141.142.149.11  idp.ncsa.illinois.edu  # Use cadocker-dev for NCSA IdP
+```
+
+Change the IP address to 141.142.149.9 or 141.142.149.10 to test cadocker1
+or cadocker2 instead.
+
+### Test ECP Login
+
+You must first test ECP (command line) access in order to make Duo
+authentication work for both ECP and web-based access. ECP testing is done
+with the <https://cilogon.org/ecp.pl> script.
+
+```
+wget https://cilogon.org/ecp.pl
+perl ecp.pl --proxyfile --idpname super --certreq create --lifetime 12
+    Enter a username for the Identity Provider: <NCSA Kerberos username>
+    Enter a password for the Identity Provider: <NCSA Kerberos password>
+    <You will be prompted to approve an automatic Duo Push.>
+grid-proxy-info
+    subject  : /DC=org/DC=cilogon/C=US/O=National Center for Supercomputing Applications/CN=NCSA USER A12345
+    issuer   : /DC=org/DC=cilogon/C=US/O=CILogon/CN=CILogon Basic CA 1
+    identity : /DC=org/DC=cilogon/C=US/O=National Center for Supercomputing Applications/CN=NCSA USER A12345
+    type     : end entity credential
+    strength : 2048 bits
+    path     : /tmp/x509up_u12345
+    timeleft : 11:58:44
+```
+
+### Test Web Login
+
+Next, go to <https://test.cilogon.org/testidp/> using a single
+Private/Incognito window and select "National Center for Supercomputing
+Applications". Log in with your NCSA Kerberos username and
+password, and verify that you got all of the User Attributes you typically
+get.
+
+When you are finished testing, remove the extra line from your `/etc/hosts`
+file (or prepend with `#` to comment it out).
+
+If you are updating cadocker1/2 , make sure to test new Docker instances
+before making them "live" with ucarp.
 
 ## SSL Certificate
 
@@ -155,19 +273,15 @@ to the [InCommon Certificate
 Service](https://cert-manager.com/customer/InCommon), and replace the
 existing (expired) SSL certificate with the new one. 
 
-### Generate a new CSR using the existing Java keystore.
+### Generate a new Certificate Signing Request (CSR)
 
 ```
-keytool -certreq \
-        -keyalg RSA \
-        -keystore /opt/ncsa-shib-idp/credentials/tomcat/keystore.jks \
-        -alias idp.ncsa.illinois.edu \
-        -file idp_ncsa_illinois_edu.csr
-Enter keystore password: <password not echoed>
+openssl req -nodes \
+            -newkey rsa:2048 \
+            -keyout idp_ncsa_illinois_edu.key \
+            -subj "/CN=idp.ncsa.illinois.edu/emailAddress=help+idp@ncsa.illinois.edu" \
+            -out idp_ncsa_illinois_edu.csr
 ```
-
-The keystore password can be found in
-`/opt/ncsa-shib-idp/config/tomcat/server.xml` as the "keystorePass" value.
 
 ### Submit the CSR to InCommon
 
@@ -179,38 +293,55 @@ someone get a certificate on your behalf.
 
 1. Log in to the [InCommon Certificate
    Service](https://cert-manager.com/customer/InCommon) .
-2. Click on the "Certificates" tab, then click the "+ Add" button.
-3. Select the "Manual creation of CSR" radio button, then click the "Next >"
-   button.
-4. On the "CSR" page, paste the contents of the `idp_ncsa_illinois_edu.csr` file
-   into the "CSR" text box, then click the "Next >" button.
-5. On the "Basic Info" page, fill in the fields as follows, then click the
-   "Next >" button.
-  - Organization: University of Illinois
-  - Department: NCSA
-  - Certificate Profile: InCommon SSL (SHA-2)
-  - Certifiate Term: 398 Days
-  - Common Name: idp.ncsa.illinois.edu (should be filled in automatically)
-  - Requester: (Your name)
-  - External Requestor: help+idp@ncsa.illinois.edu
-6. On the "Auto renew" page, optionally check the checkbox for "Enable auto
-   renewal of this certificate", then click the "OK" button.
+1. Use the [hamburger menu](https://en.wikipedia.org/wiki/Hamburger_button)
+   in the upper left corner and select "Certificates -> SSL Certificates". 
+1. In the main window, click the "+" (Add) button in the upper right corner.
+1. For "Select the Enrollment Method", choose the "Using a Certificate
+   Signing Request (CSR) Radio button, then click the "Next" button.
+1. On the "Details" page, ensure the following are set:
+   - Organization: University of Illinois
+   - Department: NCSA
+   - Certificate Profile: V2 InCommon SSL (398-day only)
+   - Certifiate Term: 398 Days
+   - Requester: (Your name)
+   - Comments: (blank)
+   - External Requestors: help+idp@ncsa.illinois.edu
+   Then click the "Next" button.
+1. On the "CSR" page, paste the contents of the `idp_ncsa_illinois_edu.csr` file
+   into the "CSR" text box, then click the "Next" button.
+1. On the "Domains" page, you should see "idp.ncsa.illinois.edu" filled in
+   automatically. Click the "Next" button.
+1. On the "Auto-Renewal" page, do NOT check "Enable Auto-Renewal", then click
+   the "OK" button.
 
-After a few minutes, you should receive an email that your certificate is
-ready. In that email, there are several download links under the "Available
-formats" heading.  Select the last one listed "as PKCS#7". This will
-download a file named `idp_ncsa_illinois_edu.p7b`. 
+You should eventually get response that your SSL certificate for
+idp.ncsa.illinois.edu is ready to download. In the email from
+support@cert-manager.com, there are several download links. Select
+"Certificate only, PEM encoded" to download the certificate. The resulting
+file should be named something like `idp_ncsa_illinois_edu.crt`.
 
-### Update the SSL Certificate in the Existing keystore.jks
+You also need to download the intermediate certificates. Select the
+"Intermediate(s)/Root only, PEM encoded" download link, and edit the
+resulting "intermediate.crt" to remove the last certificate in the file (the
+stuff between and including the last `----- BEGIN CERTIFICATE -----` and
+`----- END CERTIFICATE -----` lines) since that is a root CA certificate
+installed in all major web browsers.
 
-Next, import the new `idp_ncsa_illinois_edu.p7b` certificate into the
-existing `keystore.jks`, replacing the old certificate.
+You should now have the 3 files needed for SSL/TLS connections:
+`idp_ncsa_illinois_edu.crt`, `idp_ncsa_illinois_edu.key`, and
+`intermediate.crt`. Next, you need to convert these files into a Java keystore.
 
 ```
-keytool -import \
-        -trustcacerts \
-        -alias idp.ncsa.illinois.edu \
-        -file idp_ncsa_illinois_edu.p7b \
-        -keystore /opt/ncsa-shib-idp/credentials/tomcat/keystore.jks
-Enter keystore password: <password not echoed>
+cat idp_ncsa_illinois_edu.crt intermediate.crt > all.pem
+openssl pkcs12 -export -inkey idp_ncsa_illinois_edu.key -in all.pem -name idp.ncsa.illinois.edu -out idp_ncsa_illinois_edu.p12
+keytool -importkeystore -srckeystore idp_ncsa_illinois_edu.p12 -srcstoretype pkcs12 -destkeystore keystore.jks
 ```
+
+When prompted for passwords, use the "certificateKeystorePassword" value
+from `/opt/ncsa-shib-idp/tomcat/server.xml`.
+
+Copy the resulting `keystore.jks` file to
+`/opt/ncsa-shib-idp/credentials/tomcat/keystore.jks` and restart the
+shib-idp service as shown
+[above](#updating-the-services-with-a-new-docker-image).
+

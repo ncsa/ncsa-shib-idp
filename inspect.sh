@@ -1,1 +1,1 @@
-docker exec -t -i shib-idp /bin/bash
+sudo podman exec -t -i shib-idp /bin/bash

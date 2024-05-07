@@ -1,1 +1,1 @@
-docker build --no-cache -t ncsa/shib-idp:latest .
+sudo podman build --no-cache -t ncsa/shib-idp:latest .
