@@ -150,6 +150,7 @@ to MASTER. You must demote the MASTER server to BACKUP.
 ## Running
 
 ```
+cd /opt/ncsa-shib-idp
 sh run.sh
 ```
 
@@ -188,7 +189,7 @@ latest tagged container version).
 "active" (a.k.a., MASTER), e.g.:
 
 ```
-ip address | grep 141.142.149.33` # should be empty
+ip address | grep 141.142.149.33  # should be empty
 ```
 
 ```
@@ -294,10 +295,11 @@ someone get a certificate on your behalf.
 1. Log in to the [InCommon Certificate
    Service](https://cert-manager.com/customer/InCommon) .
 1. Use the [hamburger menu](https://en.wikipedia.org/wiki/Hamburger_button)
-   in the upper left corner and select "Certificates -> SSL Certificates". 
+   in the upper left corner and select [Certificates -> SSL
+   Certificates](https://cert-manager.com/customer/InCommon?locale=en#ssl_certificates). 
 1. In the main window, click the "+" (Add) button in the upper right corner.
 1. For "Select the Enrollment Method", choose the "Using a Certificate
-   Signing Request (CSR) Radio button, then click the "Next" button.
+   Signing Request (CSR)" radio button, then click the "Next" button.
 1. On the "Details" page, ensure the following are set:
    - Organization: University of Illinois
    - Department: NCSA
@@ -306,6 +308,7 @@ someone get a certificate on your behalf.
    - Requester: (Your name)
    - Comments: (blank)
    - External Requestors: help+idp@ncsa.illinois.edu
+
    Then click the "Next" button.
 1. On the "CSR" page, paste the contents of the `idp_ncsa_illinois_edu.csr` file
    into the "CSR" text box, then click the "Next" button.
@@ -333,8 +336,16 @@ You should now have the 3 files needed for SSL/TLS connections:
 
 ```
 cat idp_ncsa_illinois_edu.crt intermediate.crt > all.pem
-openssl pkcs12 -export -inkey idp_ncsa_illinois_edu.key -in all.pem -name idp.ncsa.illinois.edu -out idp_ncsa_illinois_edu.p12
-keytool -importkeystore -srckeystore idp_ncsa_illinois_edu.p12 -srcstoretype pkcs12 -destkeystore keystore.jks
+openssl pkcs12 \
+    -export \
+    -inkey idp_ncsa_illinois_edu.key \
+    -in all.pem -name idp.ncsa.illinois.edu \
+    -out idp_ncsa_illinois_edu.p12
+keytool \
+    -importkeystore \
+    -srckeystore idp_ncsa_illinois_edu.p12 \
+    -srcstoretype pkcs12 \
+    -destkeystore keystore.jks
 ```
 
 When prompted for passwords, use the "certificateKeystorePassword" value
