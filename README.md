@@ -6,8 +6,8 @@ is based on the [Shibboleth IdP Docker Linux Container
 (4.x)](https://github.internet2.edu/docker/shib-idp) as provided by the
 [InCommon Trusted Access Platform
 (TAP)](https://spaces.at.internet2.edu/x/fQFbC). It was built using hybrid
-approach with most files "baked-in" and secrets mounted on the docker host.
-The secrets are stored elsewhere in a [secure GitLab server at
+approach where most files are "baked-in" but secrets are mounted on the docker
+host.  The secrets are stored elsewhere in a [secure GitLab server at
 NCSA](https://git.security.ncsa.illinois.edu/cisr/ncsa-shib-idp).
 
 ## Servers
@@ -111,10 +111,12 @@ git tag -a "$VERSION" -m "Version $VERSION"
 git push -u origin main
 git push --tags
 
-docker login
-docker tag  ncsa/shib-idp:latest ncsa/shib-idp:$VERSION
-docker push ncsa/shib-idp:latest
-docker push ncsa/shib-idp:$VERSION
+### Note: If you have 2FA enabled on hub.docker.com, you must use an access token:
+### https://docs.docker.com/security/for-developers/access-tokens/
+sudo podman login docker.io
+sudo podman tag  ncsa/shib-idp:latest ncsa/shib-idp:$VERSION
+sudo podman push ncsa/shib-idp:latest
+sudo podman push ncsa/shib-idp:$VERSION
 ```
 
 ## Working with Two Production Servers via "ucarp"
@@ -152,20 +154,27 @@ to MASTER. You must demote the MASTER server to BACKUP.
 ```
 cd /opt/ncsa-shib-idp
 sh run.sh
+### If prompted to select a repository, choose docker.io
 ```
 
-## Viewing Running Container
+## Viewing the Running Container
 
-You can log into the running container as follows.
-
-```
-sh inspect.sh
-```
-
-You can view the logs for the running container as well.
+You can view the logs for the running container.
 
 ```
 sh logs.sh
+```
+
+The IdP is running when you see a line like:
+
+```
+tomcat;catalina.out;dev;nothing;2024-05-08 13:53:26,140 [main] INFO  org.apache.catalina.startup.Catalina- Server startup in [35934] milliseconds
+```
+
+You can break into the running container as follows.
+
+```
+sh inspect.sh
 ```
 
 ## Stopping
@@ -203,6 +212,7 @@ sudo podman image rm ncsa/shib-idp
 # Start the service, which will pull down the "latest" image
 cd /opt/ncsa-shib-idp
 sh run.sh
+### If prompted to select a repository, choose docker.io
 
 # Monitor the startup sequence 
 sh logs.sh
