@@ -208,7 +208,7 @@
                           memberOf.getValues().contains("cn=cilogon_aws_user,ou=Groups,dc=ncsa,dc=illinois,dc=edu"));
 
                 if (is_lsst || is_cilogon) { 
-                    awsSessionDuration.addValue("28800");
+                    awsSessionDuration.addValue("43200");
                 };
         ]]>
         </Script>
