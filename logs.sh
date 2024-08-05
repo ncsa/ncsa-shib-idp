@@ -1,1 +1,1 @@
-sudo podman logs -f shib-idp
+sudo podman logs shib-idp
