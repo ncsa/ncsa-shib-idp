@@ -1,1 +1,1 @@
-sudo podman logs shib-idp
+sudo podman logs --events-backend=journald -f shib-idp
