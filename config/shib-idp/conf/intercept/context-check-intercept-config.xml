@@ -13,7 +13,7 @@
        default-destroy-method="destroy">
 
     <!-- CACC-296 Deny login for users with grp_banned membership -->
-    <bean id="shibboleth.context-check.Condition" class="net.shibboleth.idp.profile.logic.SimpleAttributePredicate" p:useUnfilteredAttributes="true">
+    <bean id="shibboleth.context-check.Condition" parent="shibboleth.Conditions.SimpleAttribute" p:useUnfilteredAttributes="true">
         <property name="attributeValueMap">
             <map>
                 <entry key="userBanned">
@@ -31,7 +31,7 @@
             <value>
             <![CDATA[
             var event = "proceed";
-            if (custom.apply(input)) {
+            if (custom.test(input)) {
                 event = "ContextCheckDenied";
             }
             event;

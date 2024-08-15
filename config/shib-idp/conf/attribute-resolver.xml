@@ -249,7 +249,13 @@
         ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
         baseDN="%{idp.attribute.resolver.LDAP.baseDN}" 
         useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS:true}"
-        trustFile="%{idp.attribute.resolver.LDAP.trustCertificates}">
+        connectTimeout="%{idp.attribute.resolver.LDAP.connectTimeout}"
+        trustFile="%{idp.attribute.resolver.LDAP.trustCertificates}"
+        responseTimeout="%{idp.attribute.resolver.LDAP.responseTimeout}"
+        connectionStrategy="%{idp.attribute.resolver.LDAP.connectionStrategy}"
+        noResultIsError="%{idp.attribute.resolver.LDAP.noResultIsError}"
+        excludeResolutionPhases="c14n/attribute"
+    >
         <FilterTemplate>
             <![CDATA[
                 %{idp.attribute.resolver.LDAP.searchFilter}
