@@ -313,7 +313,7 @@ someone get a certificate on your behalf.
 1. On the "Details" page, ensure the following are set:
    - Organization: University of Illinois
    - Department: NCSA
-   - Certificate Profile: V2 InCommon SSL (398-day only)
+   - Certificate Profile: InCommon SSL (SHA-2)
    - Certifiate Term: 398 Days
    - Requester: (Your name)
    - Comments: (blank)
@@ -321,7 +321,8 @@ someone get a certificate on your behalf.
 
    Then click the "Next" button.
 1. On the "CSR" page, paste the contents of the `idp_ncsa_illinois_edu.csr` file
-   into the "CSR" text box, then click the "Next" button.
+   (including the BEGIN and END lines) into the "CSR" text box, then click the
+   "Next" button.
 1. On the "Domains" page, you should see "idp.ncsa.illinois.edu" filled in
    automatically. Click the "Next" button.
 1. On the "Auto-Renewal" page, do NOT check "Enable Auto-Renewal", then click
@@ -331,21 +332,22 @@ You should eventually get response that your SSL certificate for
 idp.ncsa.illinois.edu is ready to download. In the email from
 support@cert-manager.com, there are several download links. Select
 "Certificate only, PEM encoded" to download the certificate. The resulting
-file should be named something like `idp_ncsa_illinois_edu.crt`.
+file should be named something like `idp_ncsa_illinois_edu_cert.cer`.
 
 You also need to download the intermediate certificates. Select the
 "Intermediate(s)/Root only, PEM encoded" download link, and edit the
-resulting "intermediate.crt" to remove the last certificate in the file (the
-stuff between and including the last `----- BEGIN CERTIFICATE -----` and
-`----- END CERTIFICATE -----` lines) since that is a root CA certificate
-installed in all major web browsers.
+resulting `idp_ncsa_illinois_edu_interm.cer` to remove the last certificate in
+the file (the stuff between and including the last `----- BEGIN CERTIFICATE
+-----` and `----- END CERTIFICATE -----` lines) since that is a root CA
+certificate installed in all major web browsers.
 
 You should now have the 3 files needed for SSL/TLS connections:
-`idp_ncsa_illinois_edu.crt`, `idp_ncsa_illinois_edu.key`, and
-`intermediate.crt`. Next, you need to convert these files into a Java keystore.
+`idp_ncsa_illinois_edu_cert,cer`, `idp_ncsa_illinois_edu.key`, and
+`idp_ncsa_illinois_edu_interm.cer`. Next, you need to convert these files into
+a Java keystore.
 
 ```
-cat idp_ncsa_illinois_edu.crt intermediate.crt > all.pem
+cat idp_ncsa_illinois_edu_cert.cer idp_ncsa_illinois_edu_interm.cer > all.pem
 openssl pkcs12 \
     -export \
     -inkey idp_ncsa_illinois_edu.key \
@@ -359,10 +361,27 @@ keytool \
 ```
 
 When prompted for passwords, use the "certificateKeystorePassword" value
-from `/opt/ncsa-shib-idp/tomcat/server.xml`.
+from `/opt/ncsa-shib-idp/config/tomcat/server.xml`.
 
 Copy the resulting `keystore.jks` file to
 `/opt/ncsa-shib-idp/credentials/tomcat/keystore.jks` and restart the
 shib-idp service as shown
 [above](#updating-the-services-with-a-new-docker-image).
 
+Commit the new `keystore.jks` file to the NCSA Security GitLab server and
+deploy on all instances of idp.ncsa.illinois.edu. Note that deploying the
+updated `keystore.jks` file via Git will probably change the file
+permissions and ownership. Fix this issue as follows:
+
+```
+sudo -i
+cd /opt/ncsa-ship-idp/credentials/tomcat
+chown root keystore.jks
+chmod 640  keystore.jks
+
+ls -la keystore.jks
+    -rw-r-----. 1 root grp_202 7094 Dec  3 09:31 keystore.jks
+
+podman stop  shib-idp
+podman start shib-idp
+```
