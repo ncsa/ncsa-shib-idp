@@ -14,10 +14,10 @@ NCSA](https://git.security.ncsa.illinois.edu/cisr/ncsa-shib-idp).
 
 [idp.ncsa.illinois.edu](https://idp.ncsa.illinois.edu/idp/) is hosted on
 servers managed by NCSA Security Operations. There are 3 VMs which host the
-Docker servers for the NCSA IdP: `cadocker1`, `cadocker2`, and
-`cadocker-dev`. The Docker servers are independent, i.e., not using Docker
+Docker servers for the NCSA IdP: `barge1`, `barge2`, and
+`barge-dev`. The Docker servers are independent, i.e., not using Docker
 Swarm or Kubernetes. Setting the "active" production host involves setting a
-virtual Ethernet interface to "up" on one of `cadocker1` or `cadocker2`.
+virtual Ethernet interface to "up" on one of `barge1` or `barge2`.
 This is achieved with [ucarp](https://github.com/jedisct1/UCarp). The Docker
 containers are configured to listen to connections for http/https (80/443)
 on the host VMs, and the VM firewalls are configured to allow all traffic
@@ -27,10 +27,10 @@ for these ports.
 
 | Hostname                               | IP Address     | Use |
 |----------------------------------------|----------------|-----|
-| cadocker1.ncsa.illinois.edu            | 141.142.149.9  | Primary production Docker server for idp.ncsa.illinois.edu |
-| cadocker2.ncsa.illinois.edu            | 141.142.149.10 | Secondary production Docker server for idp.ncsa.illinois.edu |
-| cadocker-dev.ncsa.illinois.edu         | 141.142.149.11 | Development Docker server for idp.ncsa.illinois.edu |
-| shib-docker.security.ncsa.illinois.edu | 141.142.149.33 | Virtual IP address listened to by cadocker1/2, and used by DNS |
+| barge-vip.security.ncsa.illinois.edu   | 141.142.148.27 | Virtual IP address listened to by barge1/2 and used by DNS
+| barge1.security.ncsa.illinois.edu      | 141.142.148.28 | Primary production Docker server for idp.ncsa.illinois.edu |
+| barge2.security.ncsa.illinois.edu      | 141.142.148.29 | Secondary production Docker server for idp.ncsa.illinois.edu |
+| barge-dev.security.ncsa.illinois.edu   | 141.142.228.7  | Development Docker server for idp.ncsa.illinois.edu |
 
 ## Files
 
@@ -46,10 +46,10 @@ This respository contains files without any secrets. Configuration files
 with secrets (such as the salt for hashing) should be installed on the
 Docker host in the `/opt/ncsa-shib-idp` directory. These files are stored in
 a [GitLab respository at
-NCSA](https://git.security.ncsa.illinois.edu/cisr/ncsa-shib-idp).  Access to
+NCSA](https://git.security.ncsa.illinois.edu/cisr/ncsa-shib-idp). Access to
 this GitLab server is restricted to the NCSA Security bastion hosts (e.g.,
 bastion1.security.ncsa.illinois.edu). So in order to clone the repository,
-you will need to configure git SSH to proxy from cadocker1/2 through one of
+you will need to configure git SSH to proxy from barge1/2 through one of
 the bastion hosts. See [GitLab Setup](gitlabsetup.md) for more information.
 
 The files containing secrets are listed below. Note that file permissions
@@ -84,7 +84,7 @@ container.
 ## Building
 
 To build the container, you must have Podman/Docker installed and configured
-appropriately.  Then build the container as follows.
+appropriately. Then build the container as follows.
 
 ```
 sh build.sh
@@ -121,26 +121,26 @@ sudo podman push ncsa/shib-idp:$VERSION
 
 ## Working with Two Production Servers via "ucarp"
 
-While the NCSA Shibboleth IdP Docker container is running on all cadocker
-VMs, only one of cadocker1 / cadocker2 actually handles requests for
-<https://idp.ncsa.illinois.edu>. Which cadocker instance is "active" is
-determined by a virtual Ethernet interface for 141.142.149.33
-(shib-docker.security.ncsa.illinois.edu). There is a DNS CNAME record for
-idp.ncsa.illinois.edu which points to shib-docker.security.ncsa.illinois.edu .
-In order to easily swap between cadocker1 and cadocker2 with this virtual
+While the NCSA Shibboleth IdP Docker container is running on all barge
+VMs, only one of barge1 / barge2 actually handles requests for
+<https://idp.ncsa.illinois.edu>. Which barge instance is "active" is
+determined by a virtual Ethernet interface for 141.142.148.27
+(barge-vip.security.ncsa.illinois.edu). There is a DNS CNAME record for
+idp.ncsa.illinois.edu which points to barge-vip.security.ncsa.illinois.edu .
+In order to easily swap between barge1 and barge2 with this virtual
 IP address, use [ucarp](https://ucarp.wordpress.com/)
 ([man page](http://manpages.ubuntu.com/manpages/bionic/man8/ucarp.8.html)).
 
-There are two ways see if cadocker1/2 is the "active" host:
+There are two ways see if barge1/2 is the "active" host:
 
-1.  `ip address | grep 141.142.149.33`
-1.  `sudo pkill -10 ucarp && sudo journalctl -u ucarp@253 | grep MASTER`
+1.  `ip address | grep 141.142.148.27`
+1.  `sudo pkill -10 ucarp && sudo journalctl -u ucarp@252 | grep MASTER`
 
 In order to "swap" which server is active, ensure you are on the "active"
 server (a.k.a., MASTER), and demote it to BACKUP as follows:
 
 *   `sudo pkill -12 ucarp`
-*   `sudo pkill -10 ucarp && sudo journalctl -u ucarp@253 | grep BACKUP`
+*   `sudo pkill -10 ucarp && sudo journalctl -u ucarp@252 | grep BACKUP`
 
 The other server will notice that there is no MASTER server and grab control
 of the virtual interface.
@@ -188,8 +188,8 @@ sudo podman rm shib-idp
 
 Once a new Docker container image has been pushed to [Docker
 Hub](https://hub.docker.com/repository/docker/ncsa/shib-idp/), we need to
-update the local container instances on cadocker-dev, cadocker1, and
-cadocker2 (in that order), testing as we go. Updating the container consists
+update the local container instances on barge-dev, barge1, and
+barge2 (in that order), testing as we go. Updating the container consists
 of stopping the container, removing the container, cleaning up references to
 the container, and starting the container again (which will pull in the
 latest tagged container version).
@@ -198,7 +198,7 @@ latest tagged container version).
 "active" (a.k.a., MASTER), e.g.:
 
 ```
-ip address | grep 141.142.149.33  # should be empty
+ip address | grep 141.142.148.27  # should be empty
 ```
 
 ```
@@ -227,15 +227,15 @@ Testing idp.ncsa.illinois.edu on each Docker instance is easy since all
 interaction with the IdP is initiated by the client (e.g., the user's
 browser). So to test a specific Docker instance, you simply need to add an
 entry in your local `/etc/hosts` file which points to the server you want to
-use. For example, in order to test the IdP running on cadocker-dev, add the
+use. For example, in order to test the IdP running on barge-dev, add the
 following line to your local `/etc/hosts` file:
 
 ```
-141.142.149.11  idp.ncsa.illinois.edu  # Use cadocker-dev for NCSA IdP
+141.142.228.7  idp.ncsa.illinois.edu  # Use barge-dev for NCSA IdP
 ```
 
-Change the IP address to 141.142.149.9 or 141.142.149.10 to test cadocker1
-or cadocker2 instead.
+Change the IP address to 141.142.148.28 or 141.142.148.29 to test barge1
+or barge2 instead.
 
 ### Test ECP Login
 
@@ -270,7 +270,7 @@ get.
 When you are finished testing, remove the extra line from your `/etc/hosts`
 file (or prepend with `#` to comment it out).
 
-If you are updating cadocker1/2 , make sure to test new Docker instances
+If you are updating barge1/2 , make sure to test new Docker instances
 before making them "live" with ucarp.
 
 ## SSL Certificate
