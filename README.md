@@ -83,8 +83,8 @@ container.
 ## Updating
 
 After making changes to any of the files in this repository, increment the
-VERSION file using [semantic versioning](https://semver.org/). You may also
-need to increment the VERSION file if the upstream InCommon TAP Shibboleth
+`VERSION` file using [semantic versioning](https://semver.org/). You may also
+need to increment the `VERSION` file if the upstream InCommon TAP Shibboleth
 IdP container has been updated, e.g., due to a Tomcat vulnerability. Push
 the changes to GitHub and tag the update as follows:
 
@@ -111,9 +111,9 @@ sh build.sh
 This will result in a container `ncsa/shib-idp:latest`, plus several
 tagged images needed when uploading the container to a package repository.
 
-## Uploading Container to GitHub Container Registry (a.k.a., Packages)
+## Uploading Container to GitHub Container (Packages) Registry
 
-We use GitHub's Container Registries (a.k.a., Packages) for storing the
+We use GitHub's Container (Packages) Registry for storing the
 Docker image. In order to push a Docker image to GitHub Packages, you must
 use a [Personal Access Token (Classic version)](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry)
 that has been configured with read/write/delete permissions on packages.
@@ -127,7 +127,7 @@ Then check the checkboxes for "write:packages" and "delete:packages". Finally,
 click the "Generate token" button at the bottom of the page. Record the resulting
 token value since it will not be shown to you again.
 
-Now you can Upload the new version of the built container to
+Now you can upload the new version of the built container to
 [GitHub](https://github.com/ncsa/ncsa-shib-idp/pkgs/container/ncsa-shib-idp).
 
 ```
@@ -233,11 +233,10 @@ ip address | grep 141.142.148.27  # should be empty
 
 ```
 # Stop the current instance
-sudo podman stop shib-idp
-sudo podman rm shib-idp
+sh stop.sh
 
 # Remove the current Docker image
-sudo podman image rm ncsa/shib-idp
+sh delete.sh
 
 # Start the service, which will pull down the "latest" image
 cd /opt/ncsa-shib-idp
