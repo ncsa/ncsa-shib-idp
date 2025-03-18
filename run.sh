@@ -6,4 +6,4 @@ sudo podman run -d --name shib-idp -h idp.ncsa.illinois.edu \
   -v /opt/ncsa-shib-idp/credentials/shib-idp:/opt/shibboleth-idp/credentials \
   -v /opt/ncsa-shib-idp/credentials/tomcat:/opt/certs \
   --log-driver=journald \
-ncsa/shib-idp:latest
+ghcr.io/ncsa/ncsa-shib-idp:latest

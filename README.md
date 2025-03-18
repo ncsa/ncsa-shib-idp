@@ -80,6 +80,24 @@ container.
 └── [-rw-r--r-- root     docker  ]  run.sh
 ```
 
+## Updating
+
+After making changes to any of the files in this repository, increment the
+VERSION file using [semantic versioning](https://semver.org/). You may also
+need to increment the VERSION file if the upstream InCommon TAP Shibboleth
+IdP container has been updated, e.g., due to a Tomcat vulnerability. Push
+the changes to GitHub and tag the update as follows:
+
+```
+git pull               # Ensure local repo is current
+VERSION=`cat VERSION`  # Get current version from file
+
+git add -A
+git commit -m "Version $VERSION"
+git tag -a "$VERSION" -m "Version $VERSION"
+git push -u origin main
+git push --tags
+```
 
 ## Building
 
@@ -90,33 +108,40 @@ appropriately. Then build the container as follows.
 sh build.sh
 ```
 
-This will result in a container `ncsa/shib-idp:latest`. 
+This will result in a container `ncsa/shib-idp:latest`, plus several
+tagged images needed when uploading the container to a package repository.
 
-## Uploading Container to Docker Hub
+## Uploading Container to GitHub Container Registry (a.k.a., Packages)
 
-After making changes to any of the files in this repository, increment the
-VERSION file (using [semantic versioning](https://semver.org/)), push
-changes to GitHub, and tag the update. Then you can upload a new version of
-the built container to [Docker Hub](https://hub.docker.com) (or some other
-container repository). 
+We use GitHub's Container Registries (a.k.a., Packages) for storing the
+Docker image. In order to push a Docker image to GitHub Packages, you must
+use a [Personal Access Token (Classic version)](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry)
+that has been configured with read/write/delete permissions on packages.
+
+To create a [Personal Access Token (classic)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens),
+log in to GitHub and visit your [Tokens (classic)](https://github.com/settings/tokens)
+page. Click the "Generate new token" button and select "Generate new token (classic)"
+from the dropdown menu. In the "Note" field, enter something like 
+"GitHub Packages Registry Personal Token". Set the "Expiration" field to "No expiration".
+Then check the checkboxes for "write:packages" and "delete:packages". Finally,
+click the "Generate token" button at the bottom of the page. Record the resulting
+token value since it will not be shown to you again.
+
+Now you can Upload the new version of the built container to
+[GitHub](https://github.com/ncsa/ncsa-shib-idp/pkgs/container/ncsa-shib-idp).
 
 ```
-git pull               # Ensure local repo is current
-VERSION=`cat VERSION`  # Get current version from file
-sh build.sh            # Rebuild the container
+sh push.sh
 
-git add -A
-git commit -m "Version $VERSION"
-git tag -a "$VERSION" -m "Version $VERSION"
-git push -u origin main
-git push --tags
+GitHub Username: terrencegf
+GitHub Personal Token: (password not echoed) Login Succeeded!
+VERSION environment variable is not set. Setting it to 2.0.4 .
+Getting image source signatures
+Copying blob 7fdd5c7b1dbd done   | 
+Copying blob 3786e68e4ed7 done   | 
+. . .
+Writing manifest to image destination
 
-### Note: If you have 2FA enabled on hub.docker.com, you must use an access token:
-### https://docs.docker.com/security/for-developers/access-tokens/
-sudo podman login docker.io
-sudo podman tag  ncsa/shib-idp:latest ncsa/shib-idp:$VERSION
-sudo podman push ncsa/shib-idp:latest
-sudo podman push ncsa/shib-idp:$VERSION
 ```
 
 ## Working with Two Production Servers via "ucarp"
@@ -154,7 +179,7 @@ to MASTER. You must demote the MASTER server to BACKUP.
 ```
 cd /opt/ncsa-shib-idp
 sh run.sh
-### If prompted to select a repository, choose docker.io
+### If prompted to select a repository, choose ghcr.io
 ```
 
 ## Viewing the Running Container
@@ -180,8 +205,13 @@ sh inspect.sh
 ## Stopping
 
 ```
-sudo podman stop shib-idp
-sudo podman rm shib-idp
+sh stop.sh
+```
+
+## Deleting Images
+
+```
+sh delete.sh
 ```
 
 ## Updating the Services with a new Docker Image
