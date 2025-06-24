@@ -233,13 +233,13 @@ ip address | grep 141.142.148.27  # should be empty
 
 ```
 # Stop the current instance
+cd /opt/ncsa-shib-idp
 sh stop.sh
 
 # Remove the current Docker image
 sh delete.sh
 
 # Start the service, which will pull down the "latest" image
-cd /opt/ncsa-shib-idp
 sh run.sh
 ### If prompted to select a repository, choose docker.io
 
