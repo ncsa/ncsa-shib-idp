@@ -86,7 +86,7 @@
 
         <bean id="authn/Duo" parent="shibboleth.AuthenticationFlow"
                 p:forcedAuthenticationSupported="true"
-                p:nonBrowserSupported="true">
+                p:nonBrowserSupported="false">
             <!--
             The list below should be changed to reflect whatever locally- or
             community-defined values are appropriate to represent MFA. It is

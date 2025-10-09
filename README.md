@@ -266,28 +266,6 @@ following line to your local `/etc/hosts` file:
 Change the IP address to 141.142.148.28 or 141.142.148.29 to test barge1
 or barge2 instead.
 
-### Test ECP Login
-
-You must first test ECP (command line) access in order to make Duo
-authentication work for both ECP and web-based access. ECP testing is done
-with the <https://cilogon.org/ecp.pl> script.
-
-```
-wget https://cilogon.org/ecp.pl
-perl ecp.pl --proxyfile --idpname super --certreq create --lifetime 12
-    Enter a username for the Identity Provider: <NCSA Kerberos username>
-    Enter a password for the Identity Provider: <NCSA Kerberos password>
-    <You will be prompted to approve an automatic Duo Push.>
-grid-proxy-info
-    subject  : /DC=org/DC=cilogon/C=US/O=National Center for Supercomputing Applications/CN=NCSA USER A12345
-    issuer   : /DC=org/DC=cilogon/C=US/O=CILogon/CN=CILogon Basic CA 1
-    identity : /DC=org/DC=cilogon/C=US/O=National Center for Supercomputing Applications/CN=NCSA USER A12345
-    type     : end entity credential
-    strength : 2048 bits
-    path     : /tmp/x509up_u12345
-    timeleft : 11:58:44
-```
-
 ### Test Web Login
 
 Next, go to <https://test.cilogon.org/testidp/> using a single
