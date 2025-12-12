@@ -40,7 +40,7 @@
                 <ref bean="SAML1.ArtifactResolution" />
                 <bean parent="SAML2.SSO" p:postAuthenticationFlows="context-check" />
                 <!-- <bean parent="SAML2.SSO" p:encryptAssertions="false" /> -->
-                <ref bean="SAML2.ECP" />
+                <!-- <ref bean="SAML2.ECP" /> -->
                 <ref bean="SAML2.Logout" />
                 <ref bean="SAML2.AttributeQuery" />
                 <ref bean="SAML2.ArtifactResolution" />
