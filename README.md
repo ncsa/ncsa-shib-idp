@@ -342,7 +342,7 @@ someone get a certificate on your behalf.
 1. On the "Details" page, ensure the following are set:
    - Organization: University of Illinois
    - Department: NCSA
-   - Certificate Profile: InCommon SSL (SHA-2)
+   - Certificate Profile: InCommon SSL Single Domain (398 day only)
    - Certifiate Term: 398 Days
    - Requester: (Your name)
    - Comments: (blank)
@@ -371,7 +371,7 @@ the file (the stuff between and including the last `----- BEGIN CERTIFICATE
 certificate installed in all major web browsers.
 
 You should now have the 3 files needed for SSL/TLS connections:
-`idp_ncsa_illinois_edu_cert,cer`, `idp_ncsa_illinois_edu.key`, and
+`idp_ncsa_illinois_edu_cert.cer`, `idp_ncsa_illinois_edu.key`, and
 `idp_ncsa_illinois_edu_interm.cer`. Next, you need to convert these files into
 a Java keystore.
 
