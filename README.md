@@ -241,7 +241,7 @@ sh delete.sh
 
 # Start the service, which will pull down the "latest" image
 sh run.sh
-### If prompted to select a repository, choose docker.io
+### If prompted to select a repository, choose ghcr.io
 
 # Monitor the startup sequence 
 sh logs.sh
