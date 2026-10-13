@@ -33,14 +33,14 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <title>#springMessageText("idp.title", "NCSA Web Login Service")</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
-        <link href='http://fonts.googleapis.com/css?family=Open+Sans:800,700,600,400,300' rel='stylesheet' type='text/css' />
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:800,700,600,400,300' rel='stylesheet' type='text/css' />
         <link rel="stylesheet" href="$request.getContextPath()/css/font-awesome.min.css" type="text/css" media="all" />
         <link rel="stylesheet" href="$request.getContextPath()/css/gsce-search.css" type="text/css" media="all" />
         <link rel="stylesheet" href="$request.getContextPath()/css/home.css" type="text/css" />
         <link rel="stylesheet" href="$request.getContextPath()/css/second.css" type="text/css" />
         <link rel="shortcut icon" href="$request.getContextPath()/images/favicon.ico" type="image/x-icon" />
         <meta name="description" content="ncsa" />
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js" type="text/javascript"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js" type="text/javascript"></script>
         <script src="$request.getContextPath()/js/lower.js" type="text/javascript"></script>
     </head>
     <body onload="document.getElementById('username').focus()" data-responsejs='{ 
@@ -53,16 +53,16 @@
 
       <div id="banner" onclick="hideNav('nav');" role="banner">
         <h2>
-          <a href="http://www.ncsa.illinois.edu/">National Center for<br />Supercomputing Applications</a>
-          <span><a href="http://illinois.edu/">University of Illinois at Urbana-Champaign</a></span>
+          <a href="https://www.ncsa.illinois.edu/">National Center for<br />Supercomputing Applications</a>
+          <span><a href="https://illinois.edu/">University of Illinois at Urbana-Champaign</a></span>
         </h2>
 
-        <div id="contactus"><a class="icon-" aria-hidden="true" href="http://www.ncsa.illinois.edu/about/contact" title="Contact us">&#xf007;<!-- &#xf055; --></a> <a class="contacttxt" href="http://www.ncsa.illinois.edu/about/contact">Contact us</a>
+        <div id="contactus"><a class="icon-" aria-hidden="true" href="http://www.ncsa.illinois.edu/about/contact" title="Contact us">&#xf007;<!-- &#xf055; --></a> <a class="contacttxt" href="https://www.ncsa.illinois.edu/about/contact">Contact us</a>
         </div>
 
         <div id="logos">
-          <a href="http://www.ncsa.illinois.edu/"><img src="$request.getContextPath()/images/logos_ncsa.png" data-src1010="$request.getContextPath()/images/logos_ncsa.png" data-src1280="$request.getContextPath()/images/logos_ncsa.png" data-src1600="$request.getContextPath()/images/logos_ncsa.png" alt="NCSA home" /></a>
-          <a href="http://illinois.edu/"><img src="$request.getContextPath()/images/logos_uiuc.png" alt="Illinois home" /></a>
+          <a href="https://www.ncsa.illinois.edu/"><img src="$request.getContextPath()/images/logos_ncsa.png" data-src1010="$request.getContextPath()/images/logos_ncsa.png" data-src1280="$request.getContextPath()/images/logos_ncsa.png" data-src1600="$request.getContextPath()/images/logos_ncsa.png" alt="NCSA home" /></a>
+          <a href="https://illinois.edu/"><img src="$request.getContextPath()/images/logos_uiuc.png" alt="Illinois home" /></a>
         </div> <!-- end #logos -->
       </div> <!-- end #banner -->
 
@@ -169,14 +169,14 @@
 
       <div id="footer" role="contentinfo"  class="bump_user">
         <div id="footlogos">
-          <a href="http://www.ncsa.illinois.edu/"><img src="$request.getContextPath()/images/footer_ncsa.png" alt="NCSA home" /></a>
-          <a href="http://illinois.edu/"><img src="$request.getContextPath()/images/logos_uiuc.png" alt="University of Illinois home" /></a>
+          <a href="https://www.ncsa.illinois.edu/"><img src="$request.getContextPath()/images/footer_ncsa.png" alt="NCSA home" /></a>
+          <a href="https://illinois.edu/"><img src="$request.getContextPath()/images/logos_uiuc.png" alt="University of Illinois home" /></a>
         </div>
         <ul>
-        <li><a href="http://www.ncsa.illinois.edu/">NCSA Home <span class="icon-" aria-hidden="true" title="NCSA home">&#xf0da;</span></a></li>
-        <li><a href="http://www.ncsa.illinois.edu/site/sitemap">Sitemap <span class="icon-" aria-hidden="true" title="Sitemap">&#xf0da;</span></a></li>
-        <li><a href="http://www.ncsa.illinois.edu/about/contact">Contact NCSA <span class="icon-" aria-hidden="true" title="Contact NCSA">&#xf0da;</span></a></li>
-        <li><a href="https://internal.ncsa.illinois.edu/">NCSA intranet <span class="icon-" aria-hidden="true" title="NCSA intranet">&#xf0da;</span></a></li>
+        <li><a href="https://www.ncsa.illinois.edu/">NCSA Home <span class="icon-" aria-hidden="true" title="NCSA home">&#xf0da;</span></a></li>
+        <!-- <li><a href="https://www.ncsa.illinois.edu/site/sitemap">Sitemap <span class="icon-" aria-hidden="true" title="Sitemap">&#xf0da;</span></a></li> -->
+        <li><a href="https://www.ncsa.illinois.edu/about/contact">Contact NCSA <span class="icon-" aria-hidden="true" title="Contact NCSA">&#xf0da;</span></a></li>
+        <li><a href="https://svna.ncsa.illinois.edu/">NCSA intranet <span class="icon-" aria-hidden="true" title="NCSA intranet">&#xf0da;</span></a></li>
               </ul>
         <p>
           Contact <a
@@ -186,7 +186,7 @@
         <p>
           All rights reserved.
           &nbsp;&nbsp;&copy;2020 
-          Board of Trustees of the <a href="http://illinois.edu/">University of Illinois</a>.
+          Board of Trustees of the <a href="https://illinois.edu/">University of Illinois</a>.
         </p>
       </div> <!-- end #footer -->
     
